@@ -1,0 +1,36 @@
+---
+# Templates to be loaded
+Template:
+  - OpenConfig-interfaces.jinja2
+  - IOSXE-LACP.jinja2
+
+### DEVICE CONFIGURATION ###
+interfaces:
+  GigabitEthernet6:
+    description: Part of PO1 - Connects to C2
+    etherchannel:
+      protocol:
+        prot_name: LACP
+        fast_mode: On
+      mode: Active
+      group_interface: Port-channel1
+  GigabitEthernet7:
+    description: Part of PO1 - Connects to C2
+    etherchannel:
+      protocol:
+        prot_name: LACP
+        fast_mode: On
+      mode: Active
+      group_interface: Port-channel1
+  GigabitEthernet1:
+    description: Connects to D1
+    address_family:
+      ipv4:
+        address: 10.255.254.5
+        prefix: 30
+  GigabitEthernet2:
+    description: Connects to D2
+    address_family:
+      ipv4:
+        address: 10.255.254.17
+        prefix: 30

@@ -1,0 +1,24 @@
+---
+# Templates to be loaded
+Template:
+  - Junos-ospfv2.jinja2
+
+### DEVICE CONFIGURATION ###
+routing:
+  protocols:
+    ospfv2:
+      pid: 1
+      rid: 200.0.0.2
+      areas:
+        - area_number: 0.0.0.0
+          area_type: standard
+          interfaces:
+            ae1:
+              network_type: point-to-point
+        - area_number: 0.0.0.1
+          area_type: stub
+          interfaces:
+            ge-0/0/0:
+              network_type: point-to-point
+            ge-0/0/1:
+              network_type: point-to-point

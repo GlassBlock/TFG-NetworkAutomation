@@ -1,0 +1,6 @@
+---
+# Template to be loaded
+Template:
+  - Junos-ALLOWALLTRAFIC.jinja2
+
+interfaces: [ge-0/0/0, ge-0/0/1, ae1]

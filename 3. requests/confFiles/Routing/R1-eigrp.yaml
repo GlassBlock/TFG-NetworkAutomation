@@ -1,0 +1,13 @@
+---
+'Cisco-IOS-XE-native:native':
+  router:
+    'Cisco-IOS-XE-eigrp:router-eigrp':
+      eigrp:
+        classic-mode:
+          - autonomous-system: 1
+            network:
+              address-wildcard:
+                - ipv4-address: 10.0.0.0
+                  wildcard: 0.0.0.1
+                - ipv4-address: 10.0.0.4
+                  wildcard: 0.0.0.1

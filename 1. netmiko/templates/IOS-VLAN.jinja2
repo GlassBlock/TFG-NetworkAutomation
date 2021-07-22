@@ -1,0 +1,8 @@
+{% for vlan in layer_2.vlans %}
+    vlan {{ vlan.vlan }}
+    name {{ vlan.name }}
+{% endfor %}
+
+vtp domain name {{ layer_2.vtp.vtp_domain }}
+vtp version {{ layer_2.vtp.version }}
+vtp mode {{ layer_2.vtp.mode }}

@@ -1,0 +1,25 @@
+{# Just for testing; using this template will turn all interfaces on a Junos SRX vulnerable to attacks. #}
+<config>
+ <configuration>
+    <security>
+        <zones>
+            <security-zone>
+                <name>trust</name>
+                {% for interface in interfaces %}
+                    <interfaces>
+                        <name>{{ interface }}.0</name>
+                        <host-inbound-traffic>
+                            <system-services>
+                                <name>all</name>
+                            </system-services>
+                            <protocols>
+                                <name>all</name>
+                            </protocols>
+                        </host-inbound-traffic>
+                    </interfaces>
+                {% endfor %}
+            </security-zone>
+        </zones>
+    </security>
+ </configuration>
+</config>

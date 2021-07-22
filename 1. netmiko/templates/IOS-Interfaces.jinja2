@@ -1,0 +1,49 @@
+{% for name, interface in interfaces.items() %}
+  interface {{ name }}
+  {% if interface.description %}
+    description {{ interface.description }}
+  {% endif %}
+  {% if interface.disable == True %}
+    shutdown
+  {% else %}
+    no shutdown
+  {% endif %}
+  {# L2 Configuration #}
+  {% if interface.switchport %}
+  {% if interface.switchport.dtp == False %}
+    switchport nonegotiate
+  {% endif %}
+  {% if interface.switchport.mode == 'trunk' %}
+    switchport {{ interface.switchport.mode }} encapsulation {{ interface.switchport.encapsulation }}
+    switchport {{ interface.switchport.mode }} native vlan {{ interface.switchport.native_vlan }}
+  {% elif interface.switchport.mode == 'access' %}
+    switchport {{ interface.switchport.mode }} vlan {{ interface.switchport.vlan }}
+  {% endif %}
+    switchport mode {{ interface.switchport.mode }}
+  {# L3 Configuration #}
+  {% elif interface.layer_3 %}
+    no switchport
+    ip address {{ interface.layer_3.ipv4 }} {{ interface.layer_3.netmask }}
+    {% if interface.layer_3.vrrp %}
+      vrrp {{ interface.layer_3.vrrp.group }} priority {{ interface.layer_3.vrrp.priority }}
+      vrrp {{ interface.layer_3.vrrp.group }} ip {{ interface.layer_3.vrrp.ipv4 }}
+    {% endif %}
+  {% endif %}
+  {# EtherChannel #}
+  {% if interface.max_bundles %}
+    lacp max-bundle {{ interface.max_bundles }}
+
+  {% endif %}
+  {% if interface.etherchannel is defined %}
+    {% if interface.etherchannel.protocol.prot_name == 'LACP' %}
+      {% if interface.etherchannel.mode == 'Active' %}
+        channel-group {{ interface.etherchannel.group }} mode active
+      {% else %}
+        channel-group {{ interface.etherchannel.group }} mode passive
+      {% endif %}
+      {% if interface.etherchannel.protocol.fast_mode == True %}
+        lacp rate fast
+      {% endif %}
+    {% endif %}
+  {% endif %}
+{% endfor %}

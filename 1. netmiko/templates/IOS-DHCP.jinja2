@@ -1,0 +1,8 @@
+{% if services.dhcp is defined %}
+ {% for name, value in services.dhcp.ipv4.pools.items() %}
+  ip dhcp pool {{ name }}
+   network {{ value.network }} {{ value.network_netmask }}
+   default-router {{ value.default_router }}
+   dns-server {{ value.dns }}
+ {% endfor %}
+{% endif %}

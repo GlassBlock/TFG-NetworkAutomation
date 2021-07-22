@@ -1,0 +1,13 @@
+---
+# Templates to be loaded
+Template:
+  - OpenConfig-interfaces.jinja2
+
+### DEVICE CONFIGURATION ###
+interfaces:
+  ae1:
+    description: Connects to C1
+    address_family:
+      ipv4:
+        address: 10.255.254.2
+        prefix: 30

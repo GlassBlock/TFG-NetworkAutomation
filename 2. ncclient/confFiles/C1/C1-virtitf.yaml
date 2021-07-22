@@ -1,0 +1,13 @@
+---
+# Templates to be loaded
+Template:
+  - OpenConfig-interfaces.jinja2
+
+### DEVICE CONFIGURATION ###
+interfaces:
+  Port-channel1:
+    description: Connects to C2
+    address_family:
+      ipv4:
+        address: 10.255.254.1
+        prefix: 30

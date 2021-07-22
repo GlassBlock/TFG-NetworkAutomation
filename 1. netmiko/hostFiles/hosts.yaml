@@ -1,0 +1,23 @@
+---
+hosts:
+  - ip: 192.168.43.91
+    ssh_user: admin
+    ssh_password: adminpassword
+    device_type: cisco_ios
+    config_file: A1v2.yaml
+  - ip: 192.168.43.64
+    ssh_user: admin
+    ssh_password: adminpassword
+    device_type: cisco_ios
+    config_file: A2v2.yaml
+  - ip: 192.168.43.238
+    ssh_user: admin
+    ssh_password: adminpassword
+    device_type: cisco_ios
+    config_file: D1v2.yaml
+  - ip: 192.168.43.170
+    ssh_user: admin
+    ssh_password: adminpassword
+    device_type: cisco_ios
+    config_file: D2v2.yaml
+

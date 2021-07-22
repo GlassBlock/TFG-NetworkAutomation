@@ -1,0 +1,83 @@
+{# Jinja2 Template to configure OSPFv2 on a Cisco IOS Xe device #}
+{# Revision Date: 11-12-2020 #}
+
+{#- MACROS #}
+{% macro split_itf(original_string, get_number=False) %}
+	{% set macro_vars = namespace() %}
+	{% set macro_vars.check = False %}
+	{% set macro_vars.index = 0 -%}
+	
+	{% for character in original_string %}
+		{% if character.isdigit() and macro_vars.check == False %}
+			{% set macro_vars.check = True %}
+			{% if get_number == False -%}
+				{{ original_string[:macro_vars.index]}}
+			{%- else -%}
+				{{original_string[macro_vars.index:]}}
+			{%- endif %}
+		{% endif %}
+	{% set macro_vars.index = macro_vars.index + 1 %}
+	{% endfor %}
+{% endmacro %}
+
+{#- TEMPLATE START #}
+<config>
+    <native xmlns="http://cisco.com/ns/yang/Cisco-IOS-XE-native">
+	    {% for area in routing.protocols.ospfv2.areas %}
+		    {% for itf_name, itf_value in area.interfaces.items() %}
+	    <interface>
+		    <{{ split_itf(itf_name) }}>
+                <name>{{ split_itf(itf_name, true) }}</name>
+                <ip>
+                    <router-ospf xmlns="http://cisco.com/ns/yang/Cisco-IOS-XE-ospf">
+                        <ospf>
+                            <process-id>
+                                <id>{{ routing.protocols.ospfv2.pid }}</id>
+                                <area>
+                                <area-id>{{ area.area_number }}</area-id>
+                                </area>
+                            </process-id>
+                            {% if area.authentication %}
+                                <authentication>
+                                <{{ area.authentication.mode }}/>
+                                </authentication>
+                                <message-digest-key>
+                                    <id>1</id>
+                                    <md5>
+                                        <auth-type>0</auth-type>
+                                        <auth-key>{{ area.authentication.key }}</auth-key>
+                                    </md5>
+                                </message-digest-key>
+                            {% endif %}
+                            {% if itf_value.network_type %}
+                                <network>
+                                <{{ itf_value.network_type }}/>
+                                </network>
+                            {% endif %}
+                        </ospf>
+                    </router-ospf>
+                </ip>
+            </{{ split_itf(itf_name) }}>
+	    </interface>
+		    {% endfor %}
+	    {% endfor %}
+	    <router>
+		    <router-ospf xmlns="http://cisco.com/ns/yang/Cisco-IOS-XE-ospf">
+			    <ospf>
+				    <process-id>
+					    <id>{{ routing.protocols.ospfv2.pid }}</id>
+					    <router-id>{{ routing.protocols.ospfv2.rid }}</router-id>
+						    {% for area in routing.protocols.ospfv2.areas %}
+                            {% if area.area_type != 'standard' %}
+						    <area>
+							    <area-id>{{ area.area_number }}</area-id>
+							    <{{ area.area_type }}></{{ area.area_type }}>
+						    </area>
+                            {% endif %}
+						    {% endfor %}
+				    </process-id>
+			    </ospf>
+		    </router-ospf>
+	    </router>
+    </native>
+</config>

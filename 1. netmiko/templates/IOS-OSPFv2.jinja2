@@ -1,0 +1,19 @@
+router ospf {{ services.routing.ospfv2.pid }}
+    router-id {{ services.routing.ospfv2.rid }}
+{% for p_itf in services.routing.ospfv2.passive_interfaces %}
+	passive-interface {{ p_itf }}
+{% endfor %}
+
+{%- for area in services.routing.ospfv2.areas %}
+	{% if area_type != 'standard' %}
+	area {{ area.area_number }} {{ area.area_type }}
+	{% endif %}
+
+	{% for interface_name, interface_value in area.interfaces.items() %}
+	interface {{ interface_name }}
+		ip ospf {{ services.routing.ospfv2.pid}} area {{ area.area_number }}
+		ip ospf network {{ interface_value.network_type }}
+	{% endfor %}
+{% endfor -%}
+
+

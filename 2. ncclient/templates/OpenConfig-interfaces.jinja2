@@ -1,0 +1,60 @@
+{# Generates XML compliant data to configure interfaces through OpenConfig YANG data models -#}
+{# Revision date 11-12-2020 #}
+<config>
+    <interfaces xmlns="http://openconfig.net/yang/interfaces">
+        {% for interface_name, interface_values in interfaces.items() %}
+        <interface>
+            <name>{{ interface_name }}</name>
+            <config>
+                <name>{{ interface_name }}</name>
+                <type xmlns:ianaift="urn:ietf:params:xml:ns:yang:iana-if-type">
+                {%- if 'Port' in interface_name -%}
+                    ianaift:propVirtual
+                {%- else -%}
+                    ianaift:ethernetCsmacd
+                {%- endif -%}
+                </type>
+                {% if interface_values.description %}
+                <description>{{ interface_values.description }}</description>
+                {% endif %}
+                <enabled>
+                    {%- if interface_values.enabled == False -%}
+                        false
+                    {%- else -%}
+                        true
+                    {%- endif -%}
+                </enabled>
+            </config>
+            {% if interface_values.address_family %}
+                <subinterfaces>
+                    <subinterface>
+                        <index>0</index>
+                        <config>
+                            <index>0</index>
+                        </config>
+                        <ipv4 xmlns="http://openconfig.net/yang/interfaces/ip">
+                            <addresses>
+                                <address>
+                                    <ip>{{ interface_values.address_family.ipv4.address }}</ip>
+                                    <config>
+                                        <ip>{{ interface_values.address_family.ipv4.address }}</ip>
+                                        <prefix-length>{{ interface_values.address_family.ipv4.prefix }}</prefix-length>
+                                    </config>
+                                </address>
+                            </addresses>
+                        </ipv4>
+                    </subinterface>
+                </subinterfaces>
+            {% endif %}
+            {# Port-channel virtual interface must exist first before associating interfaces to it #}
+            {% if interface_values.etherchannel %}
+                <ethernet xmlns="http://openconfig.net/yang/interfaces/ethernet">
+                    <config>
+                        <aggregate-id xmlns="http://openconfig.net/yang/interfaces/aggregate">{{ interface_values.etherchannel.group_interface }}</aggregate-id>
+                    </config>
+                </ethernet>
+            {% endif %}
+        </interface>
+        {% endfor %}
+    </interfaces>
+</config>

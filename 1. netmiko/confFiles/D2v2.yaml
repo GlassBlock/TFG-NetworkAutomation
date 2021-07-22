@@ -1,0 +1,174 @@
+---
+# Templates to be loaded
+Templates:
+  - IOS-BasicConf.jinja2
+  - IOS-Interfaces.jinja2
+  - IOS-VLAN.jinja2
+  - IOS-STP.jinja2
+  - IOS-OSPFv2.jinja2
+
+### DEVICE CONFIGURATION ###
+# Basic Configuration
+hostname: D2
+secret: 'enablepassword'
+domain: 'GNS3Lab'
+
+# Layer 2 Common Configuration
+layer_2:
+  vlans:
+    - vlan: 50
+      name: Sales
+    - vlan: 60
+      name: IT Department
+    - vlan: 70
+      name: Administration
+    - vlan: 500
+      name: Laboratory
+    - vlan: 1000
+      name: NATIVE
+  vtp:
+    vtp_domain: GNS3VTP
+    version: 3
+    mode: 'off'
+  stp:
+      global_portfast: True
+      global_bpduguard: True
+      protocol: mst
+      mst_parameters:
+        name: MST-GNS3
+        revision: 1
+        sync_pvlan: False
+        region_instances:
+          - instance: 1
+            priority: 0
+            mappings: [50, 60, 70]
+          - instance: 2
+            priority: 0
+            mappings: [500]
+          - instance: 15
+            priority: 4096
+            mappings: [1000]
+# Interface Configuration
+interfaces:
+  G0/0:
+    description: Connects to A1
+    switchport:
+      mode: trunk
+      encapsulation: dot1q
+      native_vlan: 1000
+      dtp: Off
+  G0/1:
+    description: Connects to A2
+    switchport:
+      mode: trunk
+      encapsulation: dot1q
+      native_vlan: 1000
+      dtp: Off
+  G3/0:
+    description: Part of PO1
+    switchport:
+      mode: trunk
+      encapsulation: dot1q
+      native_vlan: 1000
+      dtp: Off
+    etherchannel:
+      protocol:
+        prot_name: LACP
+        fast_mode: on
+      mode: Active
+      group: 1
+  G3/1:
+    description: Part of PO1
+    switchport:
+      mode: trunk
+      encapsulation: dot1q
+      native_vlan: 1000
+      dtp: Off
+    etherchannel:
+      protocol:
+        prot_name: LACP
+        fast_mode: on
+      mode: Active
+      group: 1
+  po1:
+    description: Bundles G3/0-1
+    max_bundles: 4
+  vlan 1:
+    disable: On
+  vlan 50:
+    layer_3:
+      ipv4: 172.16.50.3
+      netmask: 255.255.255.0
+      vrrp:
+        group: 50
+        priority: 100
+        preempt: On
+        ipv4: 172.16.50.1
+  vlan 60:
+    layer_3:
+      ipv4: 172.16.60.3
+      netmask: 255.255.255.0
+      vrrp:
+        group: 60
+        priority: 100
+        ipv4: 172.16.60.1
+  vlan 70:
+    layer_3:
+      ipv4: 172.16.70.3
+      netmask: 255.255.255.0
+      vrrp:
+        group: 70
+        priority: 200
+        ipv4: 172.16.70.1
+  vlan 500:
+    layer_3:
+      ipv4: 172.17.0.3
+      netmask: 255.255.255.0
+      vrrp:
+        group: 100
+        priority: 200
+        ipv4: 172.17.0.1
+  vlan 1000:
+    layer_3:
+      ipv4: 172.18.0.3
+      netmask: 255.255.255.0
+      vrrp:
+        group: 200
+        priority: 200
+        ipv4: 172.18.0.1
+  #Interfaces facing Core Routers
+  G1/1:
+    layer_3:
+      ipv4: 10.255.254.18
+      netmask: 255.255.255.252
+  G1/0:
+    layer_3:
+      ipv4: 10.255.254.10
+      netmask: 255.255.255.252
+services:
+  # Routing to expose subnets to Core routers
+  routing:
+    ospfv2:
+      pid: 1
+      rid: 100.0.0.2
+      # Passive interfaces are defined here to simplify Jinja2 template
+      # as they are defined in the ospf section and not on each interface
+      passive_interfaces: [vlan 50, vlan 60, vlan 70, vlan 500, vlan 1000]
+      areas:
+        - area_number: 0.0.0.1
+          area_type: stub
+          interfaces:
+            vlan 50:
+              network_type: point-to-point
+            vlan 60:
+              network_type: point-to-point
+            vlan 70:
+              network_type: point-to-point
+            vlan 500:
+              network_type: point-to-point
+            vlan 1000:
+              network_type: point-to-point
+            G1/0:
+              network_type: point-to-point
+            G1/1:
+              network_type: point-to-point

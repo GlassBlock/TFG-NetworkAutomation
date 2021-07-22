@@ -1,0 +1,24 @@
+---
+# Templates to be loaded
+Template:
+  - IOSXE-ospfv2.jinja2
+
+### DEVICE CONFIGURATION ###
+routing:
+  protocols:
+    ospfv2:
+      pid: 1
+      rid: 200.0.0.1
+      areas:
+        - area_number: 0.0.0.0
+          area_type: standard
+          interfaces:
+            Port-channel1:
+              network_type: point-to-point
+        - area_number: 0.0.0.1
+          area_type: stub
+          interfaces:
+            GigabitEthernet1:
+              network_type: point-to-point
+            GigabitEthernet2:
+              network_type: point-to-point

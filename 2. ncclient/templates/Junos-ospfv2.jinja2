@@ -1,0 +1,33 @@
+{# Template to set Junos OSPFv2 #}
+{# Revision Date: 12-12-2020 #}
+<config>
+    <configuration>
+        <protocols>
+            <ospf>
+                {% for area in routing.protocols.ospfv2.areas %}
+                <area>
+			    <name>{{ area.area_number }}</name>
+			    {% if area.area_type != "standard" %}
+				    <{{ area.area_type }}></{{ area.area_type }}>
+			    {% endif %}
+			    {% for interface_name, interface_values in area.interfaces.items() %}
+				    <interface>
+					    <name>{{interface_name}}</name>
+					    {% if interface_values.network_type is defined %}
+					    <interface-type>
+					    {%- if interface_values.network_type == 'point-to-point' -%}
+					    p2p
+					    {%- endif -%}
+					    </interface-type>
+                        {% endif %}
+				    </interface>
+			    {% endfor %}
+			    </area>
+			    {% endfor %}
+		    </ospf>
+        </protocols>
+        <routing-options>
+		    <router-id>{{routing.protocols.ospfv2.rid}}</router-id>
+        </routing-options>
+    </configuration>
+</config>

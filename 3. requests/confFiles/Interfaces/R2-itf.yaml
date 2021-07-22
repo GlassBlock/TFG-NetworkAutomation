@@ -1,0 +1,57 @@
+---
+'openconfig-interfaces:interfaces':
+  interface:
+  - name: GigabitEthernet2
+    config:
+      name: GigabitEthernet2
+      type: iana-if-type:ethernetCsmacd
+      description:
+      enabled: true
+    subinterfaces:
+      subinterface:
+        - index: 0
+          config:
+            index: 0
+          openconfig-if-ip:ipv4:
+            addresses:
+              address:
+                - ip: 10.0.0.2
+                  config:
+                    ip: 10.0.0.2
+                    prefix-length: 31
+  - name: GigabitEthernet1
+    config:
+      name: GigabitEthernet1
+      type: iana-if-type:ethernetCsmacd
+      description:
+      enabled: true
+    subinterfaces:
+      subinterface:
+        - index: 0
+          config:
+            index: 0
+          openconfig-if-ip:ipv4:
+            addresses:
+              address:
+                - ip: 10.0.0.0
+                  config:
+                    ip: 10.0.0.0
+                    prefix-length: 31
+  - name: GigabitEthernet3
+    config:
+      name: GigabitEthernet3
+      type: iana-if-type:ethernetCsmacd
+      description:
+      enabled: true
+    subinterfaces:
+      subinterface:
+        - index: 0
+          config:
+            index: 0
+          openconfig-if-ip:ipv4:
+            addresses:
+              address:
+                - ip: 10.0.1.1
+                  config:
+                    ip: 10.0.1.1
+                    prefix-length: 24

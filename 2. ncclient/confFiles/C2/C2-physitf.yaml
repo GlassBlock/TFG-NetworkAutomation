@@ -1,0 +1,37 @@
+---
+# Templates to be loaded
+Template:
+  - OpenConfig-interfaces.jinja2
+  - Junos-LACP.jinja2
+
+### DEVICE CONFIGURATION ###
+interfaces:
+  ge-0/0/6:
+    description: Part of ae1 - Connects to C1
+    etherchannel:
+      protocol:
+        prot_name: LACP
+        fast_mode: On
+      mode: Active
+      group_interface: ae1
+  ge-0/0/7:
+    description: Part of ae1 - Connects to C1
+    etherchannel:
+      protocol:
+        prot_name: LACP
+        fast_mode: On
+      mode: Active
+      group_interface: ae1
+  ge-0/0/0:
+    description: Connects to D1
+    address_family:
+      ipv4:
+        address: 10.255.254.13
+        prefix: 30
+  ge-0/0/1:
+    description: Connects to D2
+    address_family:
+      ipv4:
+        address: 10.255.254.9
+        prefix: 30
+

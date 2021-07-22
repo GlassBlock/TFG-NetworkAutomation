@@ -1,0 +1,20 @@
+spanning-tree mode {{ layer_2.stp.protocol }}
+{% if 'mst' in layer_2.stp.protocol %}
+    spanning-tree mst configuration
+    name {{ layer_2.stp.mst_parameters.name }}
+    revision {{ layer_2.stp.mst_parameters.revision }}
+    {% if layer_2.stp.mst_parameters.sync_pvlan == True %} private-vlan synchronize {% endif %}
+    {% for instances in layer_2.stp.mst_parameters.region_instances %}
+        instance {{ instances.instance }} vlan {{ instances.mappings | join(',') }}
+    {% endfor %}
+    {% for instances in layer_2.stp.mst_parameters.region_instances -%}
+      spanning-tree mst {{ instances.instance }} priority {{ instances.priority }}
+    {% endfor %}
+{% endif %}
+
+{% if layer_2.stp.global_portfast == True %}
+    spanning-tree portfast default
+    {% if layer_2.stp.global_bpduguard == True %}
+        spanning-tree portfast bpduguard default
+    {% endif %}
+{% endif %}

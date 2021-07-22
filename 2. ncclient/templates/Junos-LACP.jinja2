@@ -1,0 +1,28 @@
+{# Template to set Junos LACP #}
+{# Revision Date: 12-12-2020 #}
+{%- set ver_interfaces = namespace() %}
+{%- set ver_interfaces.list = [] %}
+<config>
+    <configuration>
+        <interfaces>
+        {% for interface_n, interface_v in interfaces.items() %}
+	        {%- if interface_v.etherchannel is defined %}
+	        {%- if not interface_v.etherchannel.group_interface in ver_interfaces.list %}
+		        {%- set ver_interfaces.list = ver_interfaces.list + [interface_v.etherchannel.group_interface] %}
+		        <interface>
+			        <name>{{ interface_v.etherchannel.group_interface }}</name>
+			        <aggregated-ether-options>
+				        <lacp>
+					        <{{ interface_v.etherchannel.mode | lower }}/>
+                            {% if interface_v.etherchannel.protocol.fast_mode is defined and interface_v.etherchannel.protocol.fast_mode is true%}
+				            <periodic>fast</periodic>
+				            {% endif %}
+				        </lacp>
+			        </aggregated-ether-options>
+		        </interface>
+	        {% endif %}
+	        {% endif %}
+        {% endfor %}
+        </interfaces>
+    </configuration>
+</config>

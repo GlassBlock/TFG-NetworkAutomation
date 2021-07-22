@@ -1,0 +1,42 @@
+---
+hosts:
+    R1:
+      ip: 192.168.43.43
+      port: 443
+      username: admin
+      password: adminpassword
+      conf_files:
+        Interfaces:
+          - R1-itf.yaml
+        Routing:
+          - R1-eigrp.yaml
+    R2:
+      ip: 192.168.43.202
+      port: 443
+      username: admin
+      password: adminpassword
+      conf_files:
+        Interfaces:
+          - R2-itf.yaml
+        Routing:
+          - R2-eigrp.yaml
+    R3:
+      ip: 192.168.43.185
+      port: 443
+      username: admin
+      password: adminpassword
+      conf_files:
+        Interfaces:
+          - R3-itf.yaml
+        Routing:
+          - R3-eigrp.yaml
+    R4:
+      ip: 192.168.43.95
+      port: 443
+      username: admin
+      password: adminpassword
+      conf_files:
+        Interfaces:
+          - R4-itf.yaml
+        Routing:
+          - R4-eigrp.yaml

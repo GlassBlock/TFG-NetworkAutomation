@@ -1,0 +1,15 @@
+---
+hosts:
+  - hostname: C1
+    ip: 192.168.43.226
+    ssh_user: admin
+    ssh_password: adminpassword
+    device_type: csr
+    config_files: [C1-virtitf.yaml, C1-physitf.yaml, C1-OSPF.yaml]
+  - hostname: C2
+    ip: 192.168.43.175
+    ssh_user: junosauto
+    ssh_password: adminpassword123
+    device_type: junos
+    config_files: [C2-virtitf.yaml, C2-physitf.yaml, C2-OSPF.yaml, C2-ALLOWALLTRAFFIC.yaml]
+

@@ -1,0 +1,72 @@
+---
+# Templates to be loaded
+Templates:
+  - IOS-BasicConf.jinja2
+  - IOS-Interfaces.jinja2
+  - IOS-VLAN.jinja2
+  - IOS-STP.jinja2
+
+
+### DEVICE CONFIGURATION ###
+# Basic Configuration
+hostname: A2
+secret: 'enablepassword'
+domain: 'GNS3Lab'
+
+# Layer 2 Common Configuration
+layer_2:
+  vlans:
+    - vlan: 50
+      name: Sales
+    - vlan: 60
+      name: IT Department
+    - vlan: 70
+      name: Administration
+    - vlan: 500
+      name: Laboratory
+    - vlan: 1000
+      name: NATIVE
+  vtp:
+    vtp_domain: GNS3VTP
+    version: 3
+    mode: 'off'
+  stp:
+      global_portfast: True
+      global_bpduguard: True
+      protocol: mst
+      mst_parameters:
+        name: MST-GNS3
+        revision: 1
+        sync_pvlan: False
+        region_instances:
+          - instance: 1
+            priority: 12288
+            mappings: [50, 60, 70]
+          - instance: 2
+            priority: 12288
+            mappings: [500]
+          - instance: 15
+            priority: 12288
+            mappings: [1000]
+# Interface Configuration
+interfaces:
+  G0/0:
+    description: Connects to D1
+    switchport:
+      mode: trunk
+      encapsulation: dot1q
+      native_vlan: 1000
+      dtp: Off
+  G0/1:
+    description: Connects to D2
+    switchport:
+      mode: trunk
+      encapsulation: dot1q
+      native_vlan: 1000
+      dtp: Off
+  G3/0:
+    description: Access VL70
+    switchport:
+      mode: access
+      vlan: 70
+services:

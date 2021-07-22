@@ -1,0 +1,40 @@
+{# Jinja2 Template to configure additional LACP parameters on a Cisco IOS Xe device #}
+{# Revision Date: 12-12-2020 #}
+
+{#- MACROS #}
+{% macro split_itf(original_string, get_number=False) %}
+	{% set macro_vars = namespace() %}
+	{% set macro_vars.check = False %}
+	{% set macro_vars.index = 0 -%}
+
+	{% for character in original_string %}
+		{% if character.isdigit() and macro_vars.check == False %}
+			{% set macro_vars.check = True %}
+			{% if get_number == False -%}
+				{{ original_string[:macro_vars.index]}}
+			{%- else -%}
+				{{original_string[macro_vars.index:]}}
+			{%- endif %}
+		{% endif %}
+	{% set macro_vars.index = macro_vars.index + 1 %}
+	{% endfor %}
+{% endmacro %}
+
+{#- TEMPLATE START #}
+<config>
+    <native xmlns="http://cisco.com/ns/yang/Cisco-IOS-XE-native">
+        {% for itf_name, itf_value in interfaces.items() %}
+        {% if itf_value.etherchannel is defined and itf_value.etherchannel.protocol.fast_mode is defined and
+             itf_value.etherchannel.protocol.fast_mode is true %}
+	    <interface>
+            <{{ split_itf(itf_name) }}>
+                <name>{{ split_itf(itf_name, true) }}</name>
+            <lacp xmlns="http://cisco.com/ns/yang/Cisco-IOS-XE-ethernet">
+			<rate>fast</rate>
+            </lacp>
+            </{{ split_itf(itf_name) }}>
+        </interface>
+        {% endif %}
+        {% endfor %}
+    </native>
+</config>
